@@ -10,9 +10,11 @@ from bot.functions.default.start_func import start_func
 
 
 # Handlers
+def bot_start():
+    '''<<<-----   DEFAULT   ----->>>'''
+    dp.register_message_handler(start_func, commands='start')
 
-'''<<<-----   DEFAULT   ----->>>'''
-dp.register_message_handler(start_func, commands='start')
+    executor.start_polling(dp, skip_updates=True, loop=loop)
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True, loop=loop)
+    bot_start()
