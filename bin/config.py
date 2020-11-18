@@ -1,7 +1,7 @@
 
 # Variables
-bot_token = ''
+BOT_TOKEN = ''
 
-database_name = ''
+DB_NAME = ''
 
-parse_mode = 'HTML'
+PARSE_MODE = 'HTML'

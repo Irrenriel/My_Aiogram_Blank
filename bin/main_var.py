@@ -2,7 +2,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram import Bot, Dispatcher
 import asyncio
 
-from bin.config import bot_token, database_name, parse_mode
+from bin.config import BOT_TOKEN, DB_NAME, PARSE_MODE
 from bin.settings_class import SQLite_db, Scheduler_ex, Middleware
 
 # Loop
@@ -15,11 +15,12 @@ scheduler = Scheduler_ex(loop)
 storage = MemoryStorage()
 
 # Bot
-bot = Bot(token=bot_token, loop=loop, parse_mode=parse_mode)
+bot = Bot(token=BOT_TOKEN, loop=loop, parse_mode=PARSE_MODE)
 
 # Dispatcher
 dp = Dispatcher(bot, storage=storage, loop=loop)
 
 # Database
-db = SQLite_db(db='bin\{}.db'.format(database_name))
-dp.middleware.setup(Middleware(db))
+if DB_NAME:
+    db = SQLite_db(db=f'bin\{DB_NAME}.db')
+    dp.middleware.setup(Middleware(db))
