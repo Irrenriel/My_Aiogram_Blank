@@ -1,9 +1,15 @@
-from aiogram import executor
+from aiogram import executor, filters
 from bin.main_var import dp, loop
 import logging
 
 from bot.functions.default.start_func import start_func
 
+
+# Process Name (for Linux)
+if sys.platform == 'linux':
+    import ctypes
+    libc = ctypes.cdll.LoadLibrary('libc.so.6')
+    libc.prctl(15, 'A', 0, 0, 0)
 
 # Logging
 #logging.basicConfig(level=logging.DEBUG, filename='error.log', filemode='w')

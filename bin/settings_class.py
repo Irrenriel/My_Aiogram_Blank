@@ -15,6 +15,9 @@ class Middleware(BaseMiddleware):
     async def on_process_callback_query(self, callback_query: types.CallbackQuery, data: dict):
         callback_query.db = self.db
 
+    async def on_process_inline_query(self, inline_query: types.InlineQuery, data: dict):
+        inline_query.db = self.db
+
 
 class SQLite_db():
     '''
@@ -24,6 +27,8 @@ class SQLite_db():
         self.con = sqlite3.connect(db, check_same_thread=False)
 
     def check(self, req, args):
+        if args is None:
+            args = []
         cur = self.con.cursor()
         cur.execute(req, args)
         res = cur.fetchone()
@@ -31,6 +36,8 @@ class SQLite_db():
         return res
 
     def checkall(self, req, args):
+        if args is None:
+            args = []
         cur = self.con.cursor()
         cur.execute(req, args)
         res = cur.fetchall()
@@ -38,8 +45,18 @@ class SQLite_db():
         return res
 
     def query(self, req, args):
+        if args is None:
+            args = []
         cur = self.con.cursor()
         cur.execute(req, args)
+        self.con.commit()
+        cur.close()
+
+    def querymany(self, req, args=None):
+        if args is None:
+            args = []
+        cur = self.con.cursor()
+        cur.executemany(req, args)
         self.con.commit()
         cur.close()
 
@@ -56,11 +73,8 @@ class Scheduler_ex():
                 call(res.result())
         asyncio.ensure_future(func(**params), loop=self.loop).add_done_callback(result)
 
-    def add_job(self, hours:int, minutes:int, seconds:int, args:list, id=None):
-        self.scheduler.add_job(self.afs, trigger='interval', hours=hours, minutes=minutes, seconds=seconds, args=args, id=str(id))
-
-    def add_job_for_pins(self, hour:int, minute:int, args:list, id=None):
-        self.scheduler.add_job(self.afs, trigger='cron', hour=hour, minute=minute, args=args, id=id)
+    def add_job(self, kwargs: dict, args: list, id=None):
+        self.scheduler.add_job(self.afs, trigger='interval', **kwargs, args=args, id=str(id))
 
     def remove_job(self, id):
         self.scheduler.remove_job(str(id))
